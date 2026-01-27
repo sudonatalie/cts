@@ -31,6 +31,7 @@ import {
 } from '../../../../../util/conversion.js';
 import { Case } from '../../case.js';
 import { run, allInputSources } from '../../expression.js';
+import { runFlowControlTest } from '../../../flow_control/harness.js';
 
 import { abstractFloatBuiltin, abstractIntBuiltin, builtin } from './builtin.js';
 
@@ -265,4 +266,26 @@ g.test('vector')
       t.params,
       tests.cases
     );
+  });
+
+g.test('short_circuit')
+  .desc('Test that select does not short-circuit and evaluates arguments left-to-right')
+  .params(u => u.combine('cond', [true, false]).combine('preventValueOptimizations', [true, false]))
+  .fn(t => {
+    runFlowControlTest(t, f => ({
+      entrypoint: `
+        let res = select(f(), g(), ${f.value(t.params.cond)});
+      `,
+      extra: `
+        fn f() -> i32 {
+          ${f.expect_order(0)}
+          return 0;
+        }
+
+        fn g() -> i32 {
+          ${f.expect_order(1)}
+          return 0;
+        }
+      `,
+    }));
   });
