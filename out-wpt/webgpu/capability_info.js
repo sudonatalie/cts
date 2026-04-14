@@ -979,4 +979,7 @@ export const kKnownWGSLLanguageFeatures = [
 'uniform_buffer_standard_layout',
 'texture_and_sampler_let',
 'subgroup_id',
-'subgroup_uniformity'];
+'subgroup_uniformity',
+'swizzle_assignment',
+'linear_indexing',
+'texture_formats_tier1'];
